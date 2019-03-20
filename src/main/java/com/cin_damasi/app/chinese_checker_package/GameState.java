@@ -217,7 +217,41 @@ public class GameState
         //    YOUR CODE HERE
         //
         */
-
+        
+        List<PiecePosition> backwardPositionsz = piece.getForwardPositions();
+        for (PiecePosition backwardPosition: backwardPositionsz)
+        {
+            
+        	
+        	
+            if (isPositionAvailable(backwardPosition))
+            {
+                //  create a Move object from a piece, current position
+                //and the position after move
+                Move move = new Move(piece, currentPosition, backwardPosition);
+                moves.add(move);
+            }
+        }
+        
+        
+        List<PiecePosition> backwardPositions = piece.getForwardJumpPositions(currentPosition);
+        for (PiecePosition backwardPosition: backwardPositions)
+        {
+        	
+        	PiecePosition middlePosition = getBetweenPosition(currentPosition,backwardPosition);
+            //  check if positions are available
+            //available = empty AND within game board
+            if (!isPositionAvailable(middlePosition) && (isPositionAvailable(backwardPosition)))
+            {
+                //  create a Move object from a piece, current position
+                //and the position after move
+                Move move = new Move(piece, currentPosition, backwardPosition);
+                moves.add(move);
+            }
+        }
+        
+        
+       
         //  return list of found moves
         return moves;
     }
