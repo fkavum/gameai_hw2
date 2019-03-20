@@ -183,7 +183,7 @@ public class GameState
      * @param   preState - 2d int array (internal state representation)
      * @return  A deep copied version of 2d game state array
      */
-    public int[][] cloneGameState(int [][]preState){
+    public static int[][] cloneGameState(int [][]preState){
         int [][] myInt = new int[preState.length][];
         for(int i = 0; i < preState.length; i++)
             myInt[i] = preState[i].clone();
@@ -214,16 +214,13 @@ public class GameState
 
         /*
         //
-        //  YOUR IMPLEMENTATION HERE
+        //    YOUR CODE HERE
         //
         */
-
-
 
         //  return list of found moves
         return moves;
     }
-
 
 
     /* Takes a piece, and returns moves it can perform in backward direction.
@@ -299,6 +296,32 @@ public class GameState
 
         //  create a GameState object from constructed 2d state array
         return new GameState(newGameStateArray);
+    }
+
+
+    /* Takes current state of the game and played move
+     * and returns the next state.
+     *
+     * @param   pieces - List containing all pieces in the game
+     * @return  created GameState object
+     */
+    public static GameState createState(GameState previousState, Move playedMove)
+    {
+        //  copy game state array
+        int [][] newStateArray = GameState.cloneGameState(previousState.getGameStateArray());
+
+        //  clear previous position of the piece
+        int prevRow = playedMove.getPreviousPosition().getRow();
+        int prevColumn = playedMove.getPreviousPosition().getColumn();
+        newStateArray[prevRow][prevColumn] = PIECE_COLOR_NO_PIECE;
+
+        //  put piece to new position
+        int nextRow = playedMove.getNextPosition().getRow();
+        int nextColumn = playedMove.getNextPosition().getColumn();
+        newStateArray[nextRow][nextColumn] = playedMove.getPiece().getColor();
+
+        //  create a GameState object from constructed 2d state array
+        return new GameState(newStateArray);
     }
 
 
