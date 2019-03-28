@@ -41,7 +41,7 @@ public class GameState
     public GameState() {
         // initilaze initial state if no arguments constructor
         initializeBoard();
-        
+    
     }
 
     public GameState(int [][] gameState){
@@ -218,40 +218,38 @@ public class GameState
         //
         */
         
-        List<PiecePosition> backwardPositionsz = piece.getForwardPositions();
-        for (PiecePosition backwardPosition: backwardPositionsz)
+        List<PiecePosition> forwardPositions = piece.getForwardPositions();
+        for (PiecePosition forwardPosition: forwardPositions)
         {
             
         	
         	
-            if (isPositionAvailable(backwardPosition))
+            if (isPositionAvailable(forwardPosition))
             {
                 //  create a Move object from a piece, current position
                 //and the position after move
-                Move move = new Move(piece, currentPosition, backwardPosition);
+                Move move = new Move(piece, currentPosition, forwardPosition);
                 moves.add(move);
             }
         }
         
         
-        List<PiecePosition> backwardPositions = piece.getForwardJumpPositions(currentPosition);
-        for (PiecePosition backwardPosition: backwardPositions)
+        List<PiecePosition> forwardJumpPositions = piece.getForwardJumpPositions(currentPosition);
+        for (PiecePosition forwardJumpPosition: forwardJumpPositions)
         {
         	
-        	PiecePosition middlePosition = getBetweenPosition(currentPosition,backwardPosition);
+        	PiecePosition middlePosition = getBetweenPosition(currentPosition,forwardJumpPosition);
             //  check if positions are available
             //available = empty AND within game board
-            if (!isPositionAvailable(middlePosition) && (isPositionAvailable(backwardPosition)))
+            if (!isPositionAvailable(middlePosition) && (isPositionAvailable(forwardJumpPosition)))
             {
                 //  create a Move object from a piece, current position
                 //and the position after move
-                Move move = new Move(piece, currentPosition, backwardPosition);
+                Move move = new Move(piece, currentPosition, forwardJumpPosition);
                 moves.add(move);
             }
         }
         
-        
-       
         //  return list of found moves
         return moves;
     }
