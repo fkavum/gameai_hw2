@@ -135,12 +135,14 @@ public class Game implements PieceListener, SquareListener, Runnable
                     //  red player won
                     System.out.println("RED WON");
                     Util.infoBox("GAME FINISHED", "RED PLAYER WON");
+                    gameFinished = true;
                 }
                 else if (result == GameResult.GREEN_WON)
                 {
                     //  green player won
                     System.out.println("GREEN WON");
                     Util.infoBox("GAME FINISHED", "GREEN PLAYER WON");
+                    gameFinished = true;
                 }
                 else if (result == GameResult.DRAW)
                 {
@@ -190,6 +192,12 @@ public class Game implements PieceListener, SquareListener, Runnable
                     //wait for user input to make move
                 }
                 else if (this.currentPlayer instanceof ComputerPlayer)
+                {
+                    //  computer player
+                    //wait for search/function to finish
+                    this.playedMove = this.currentPlayer.getMove(this.currentState);
+                }
+                else if (this.currentPlayer instanceof ComputerPlayerMinimax)
                 {
                     //  computer player
                     //wait for search/function to finish

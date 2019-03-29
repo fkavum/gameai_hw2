@@ -33,6 +33,9 @@ class ComputerPlayerMinimax extends ComputerPlayer
      */
     public Move getMove(GameState gameState)
     {
+    	Move move = new Move(piece, currentPosition, forwardPosition);
         return null;
     }
+    
+    
 }
