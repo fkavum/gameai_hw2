@@ -58,7 +58,7 @@ class ComputerPlayerMinimax extends ComputerPlayer
         int randomInt = random.nextInt(availableMoves.size());
         Move randomMove = availableMoves.get(randomInt);
         
-        int breakLevel = 1;
+        int breakLevel = 2;
         
         
         int [][] newStateArray = GameState.cloneGameState(gameState.getGameStateArray());
@@ -71,19 +71,19 @@ class ComputerPlayerMinimax extends ComputerPlayer
          
         while (unCalculatedNodes.size() != 0 ) {
 
-        	GameStateMinimax currentNode = this.unCalculatedNodes.get(0);
-        	if (currentNode.stateLayer >= breakLevel) {break;}
+        	this.currentNode = this.unCalculatedNodes.get(0);
+        	if (this.currentNode.stateLayer >= breakLevel) {break;}
         	
         	List<int [][]> nodes = generateNextNodes(currentNode);
         	
         	for (int [][] node: nodes)
             {
-        		GameStateMinimax newNode = new GameStateMinimax(node,currentNode);
         		this.gameStateTree.add(newNode);
                 this.newLayer.add(newNode);
             }
         	
         	this.unCalculatedNodes.remove(currentNode);
+        	this.unCalculatedNodes.remove(this.currentNode);
         	
         	if(this.unCalculatedNodes.size() == 0 ) {
         		this.unCalculatedNodes.addAll(this.newLayer);
@@ -247,6 +247,7 @@ class ComputerPlayerMinimax extends ComputerPlayer
                 //  create a Move object from a piece, current position
                 //and the position after move
             	int [][] newState = createNewStateArray(row,col, backwardPosition, gameStateArray);
+            	
                 moves.add(newState);
             }
         }
