@@ -55,9 +55,9 @@ class ComputerPlayerMinimax extends ComputerPlayer
         List<Move> availableMoves = this.getAvailableMoves(gameState);
 
         //  select a random move	//
-        Random random = new Random();
+        /*Random random = new Random();
         int randomInt = random.nextInt(availableMoves.size());
-        Move randomMove = availableMoves.get(randomInt);
+        Move randomMove = availableMoves.get(randomInt);*/
         
         int breakLevel = 2;
         
@@ -94,13 +94,25 @@ class ComputerPlayerMinimax extends ComputerPlayer
         	
         }
         
+        GameStateMinimax selectedNode = gameStateTree.get(10);
+        Piece selectedPiece = null;
+        for (Piece piece: this.pieces)
+        {
+    		int pieceRow = piece.getPosition().getRow();
+    		int pieceCol = piece.getPosition().getColumn();
+    		
+    		if (selectedNode.prevPos.getRow() == pieceRow && selectedNode.prevPos.getColumn() == pieceCol) {
+    			selectedPiece = piece;
+    		}
+    		
+        }
         
-        //Move move = new Move(piece, currentPosition, backwardPosition);
+        
+        Move move = new Move(selectedPiece, selectedPiece.getPosition(), selectedNode.movedPos);
         System.out.println("MOVE YAPILDI");
-        return randomMove;   
+        return move;   
     	
-    	//Move move = new Move(piece, currentPosition, forwardPosition);
-        //return null;
+    	
     }
     
     
