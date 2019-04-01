@@ -47,7 +47,13 @@ public class GameStateMinimax {
 	    
 	    }
 	
-	
+	 public static int[][] cloneGameState(int [][]preState){
+	        int [][] myInt = new int[preState.length][];
+	        for(int i = 0; i < preState.length; i++)
+	            myInt[i] = preState[i].clone();
+	        
+	        return myInt;
+	    }
 	private void calculateScore() {
 		
 		
