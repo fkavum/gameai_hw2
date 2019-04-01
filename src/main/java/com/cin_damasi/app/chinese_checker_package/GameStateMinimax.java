@@ -16,13 +16,18 @@ public class GameStateMinimax {
 	public int [][] stateArray;	
 	public GameStateMinimax previousState;
 	
+	public PiecePosition prevPos;
+	public PiecePosition movedPos;
+	
 	public int stateLayer;
 	public int statePlayer;
 	public int score;
 	
-	 public GameStateMinimax(int [][] stateArray,GameStateMinimax previousState) {
+	 public GameStateMinimax(int [][] stateArray,GameStateMinimax previousState,PiecePosition prevPos,PiecePosition movedPos) {
 		 this.stateArray = stateArray;
 		 this.previousState = previousState;
+		 this.prevPos = prevPos;
+		 this.movedPos = movedPos;
 		 this.stateId = GameStateMinimax.idCounter;
 		 GameStateMinimax.idCounter = GameStateMinimax.idCounter + 1;
 		 

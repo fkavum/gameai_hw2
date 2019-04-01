@@ -63,7 +63,7 @@ class ComputerPlayerMinimax extends ComputerPlayer
         
         
         int [][] newStateArray = GameState.cloneGameState(gameState.getGameStateArray());
-        GameStateMinimax originalState = new GameStateMinimax(newStateArray,null);
+        GameStateMinimax originalState = new GameStateMinimax(newStateArray,null,null,null);
         
         this.gameStateTree = new ArrayList<GameStateMinimax>();
         this.unCalculatedNodes = new ArrayList<GameStateMinimax>();
@@ -75,11 +75,11 @@ class ComputerPlayerMinimax extends ComputerPlayer
         	this.currentNode = this.unCalculatedNodes.get(0);
         	if (this.currentNode.stateLayer >= breakLevel) {break;}
         	
-        	List<int [][]> nodes = generateNextNodes(this.currentNode);
+        	List<GameStateMinimax> nodes = generateNextNodes(this.currentNode);
         	
-        	for (int [][] node: nodes)
+        	for (GameStateMinimax newNode: nodes)
             {
-        		GameStateMinimax newNode = new GameStateMinimax(node,this.currentNode);
+        		
         		this.gameStateTree.add(newNode);
                 this.newLayer.add(newNode);
             }
@@ -106,7 +106,7 @@ class ComputerPlayerMinimax extends ComputerPlayer
     
     
     
-    public List<int [][]> generateNextNodes(GameStateMinimax gameState) {
+    public List<GameStateMinimax> generateNextNodes(GameStateMinimax gameState) {
     	
     	if(gameState.statePlayer == PLAYER_RED) {
     		this.currentNodePlayer = PLAYER_GREEN;
@@ -115,14 +115,14 @@ class ComputerPlayerMinimax extends ComputerPlayer
     	}
     	
     	
-    	List<int [][]> nodes = getAvailableMovesArray(gameState.stateArray);
+    	List<GameStateMinimax> nodes = getAvailableMovesArray(gameState.stateArray);
     	
     	return nodes;
     }
     
-    public List<int [][]> getAvailableMovesArray(int [][] gameStateArray)
+    public List<GameStateMinimax> getAvailableMovesArray(int [][] gameStateArray)
     {
-        List<int [][]> availableMoves = this.getAvailableForwardMovesArray(gameStateArray);
+        List<GameStateMinimax> availableMoves = this.getAvailableForwardMovesArray(gameStateArray);
 
         //  if player does not have any forward moves left, return backward moves
         if (availableMoves.size() == 0)
@@ -133,9 +133,9 @@ class ComputerPlayerMinimax extends ComputerPlayer
         return availableMoves;
     }
     
-    public List<int [][]> getAvailableForwardMovesArray(int [][] gameStateArray)
+    public List<GameStateMinimax> getAvailableForwardMovesArray(int [][] gameStateArray)
     {
-        List<int [][]> availableForwardMoves = new ArrayList<int [][]>();
+        List<GameStateMinimax> availableForwardMoves = new ArrayList<GameStateMinimax>();
 
         for (int row = 0; row < 8; ++row)
         {
@@ -153,11 +153,11 @@ class ComputerPlayerMinimax extends ComputerPlayer
         return availableForwardMoves;
     }
 
-    public List<int [][]> getNextMovesForwardArray(int row, int col,int [][] gameStateArray)
+    public List<GameStateMinimax> getNextMovesForwardArray(int row, int col,int [][] gameStateArray)
     {
         //  function will returns list of possible Moves
         //the piece can perform
-        List<int [][]> moves = new ArrayList<int [][]>();
+        List<GameStateMinimax> moves = new ArrayList<GameStateMinimax>();
         
         //  get position information of piece
         int i = row;
@@ -173,7 +173,8 @@ class ComputerPlayerMinimax extends ComputerPlayer
                 //  create a Move object from a piece, current position
                 //and the position after move
             	int [][] newState = createNewStateArray(row,col, forwardPosition, gameStateArray);
-                moves.add(newState);
+            	GameStateMinimax newNode = new GameStateMinimax(newState,this.currentNode,getPiecePosition(row,col),forwardPosition);
+                moves.add(newNode);
             }
         }
         
@@ -190,7 +191,8 @@ class ComputerPlayerMinimax extends ComputerPlayer
                 //  create a Move object from a piece, current position
                 //and the position after move
             	int [][] newState = createNewStateArray(row,col, forwardJumpPosition, gameStateArray);
-                moves.add(newState);
+            	GameStateMinimax newNode = new GameStateMinimax(newState,this.currentNode,getPiecePosition(row,col),forwardJumpPosition);
+                moves.add(newNode);
             }
         }
         
@@ -199,9 +201,9 @@ class ComputerPlayerMinimax extends ComputerPlayer
     }
 
     
-    public List<int [][]> getAvailableBackwardMovesArray(int [][] gameStateArray)
+    public List<GameStateMinimax> getAvailableBackwardMovesArray(int [][] gameStateArray)
     {
-    	List<int [][]> availableBackwardMoves = new ArrayList<int [][]>();
+    	List<GameStateMinimax> availableBackwardMoves = new ArrayList<GameStateMinimax>();
 
         for (int row = 0; row < 8; ++row)
         {
@@ -219,12 +221,12 @@ class ComputerPlayerMinimax extends ComputerPlayer
     	
     }
     
-    public List<int [][]> getNextMovesBackwardArray(int row, int col,int [][] gameStateArray)
+    public List<GameStateMinimax> getNextMovesBackwardArray(int row, int col,int [][] gameStateArray)
     {
 
         //  function will returns list of possible Moves
         //the piece can perform
-        List<int [][]> moves = new ArrayList<int [][]>();
+        List<GameStateMinimax> moves = new ArrayList<GameStateMinimax>();
         
         //  get position information of piece
         int i = row;
@@ -248,8 +250,8 @@ class ComputerPlayerMinimax extends ComputerPlayer
                 //  create a Move object from a piece, current position
                 //and the position after move
             	int [][] newState = createNewStateArray(row,col, backwardPosition, gameStateArray);
-            	
-                moves.add(newState);
+            	GameStateMinimax newNode = new GameStateMinimax(newState,this.currentNode,getPiecePosition(row,col),backwardPosition);
+                moves.add(newNode);
             }
         }
 
@@ -340,7 +342,10 @@ class ComputerPlayerMinimax extends ComputerPlayer
         return poses;
     }
 
-    
+    public PiecePosition getPiecePosition(int row, int col) {
+    	
+    	return new PiecePosition(row, col);
+    }
     
     
     public boolean isPositionAvailable(PiecePosition pos,int [][] gameStateArray)
