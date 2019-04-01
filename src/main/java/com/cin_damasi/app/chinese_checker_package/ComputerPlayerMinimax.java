@@ -21,6 +21,7 @@ class ComputerPlayerMinimax extends ComputerPlayer
 	public List<GameStateMinimax> unCalculatedNodes = new ArrayList<GameStateMinimax>();
 	public List<GameStateMinimax> newLayer = new ArrayList<GameStateMinimax>();
 	public int currentNodePlayer;
+	public GameStateMinimax currentNode;
 	
     public ComputerPlayerMinimax(int whichPlayer)
     {
@@ -74,15 +75,15 @@ class ComputerPlayerMinimax extends ComputerPlayer
         	this.currentNode = this.unCalculatedNodes.get(0);
         	if (this.currentNode.stateLayer >= breakLevel) {break;}
         	
-        	List<int [][]> nodes = generateNextNodes(currentNode);
+        	List<int [][]> nodes = generateNextNodes(this.currentNode);
         	
         	for (int [][] node: nodes)
             {
+        		GameStateMinimax newNode = new GameStateMinimax(node,this.currentNode);
         		this.gameStateTree.add(newNode);
                 this.newLayer.add(newNode);
             }
         	
-        	this.unCalculatedNodes.remove(currentNode);
         	this.unCalculatedNodes.remove(this.currentNode);
         	
         	if(this.unCalculatedNodes.size() == 0 ) {
