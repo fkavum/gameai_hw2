@@ -57,8 +57,8 @@ public class Game implements PieceListener, SquareListener, Runnable
 
 
         //this.playerGreen = new HumanPlayer(PLAYER_GREEN);
-        this.playerGreen = new ComputerPlayerRandom(PLAYER_GREEN);
-        //this.playerGreen = new ComputerPlayerMinmax(PLAYER_GREEN);
+        //this.playerGreen = new ComputerPlayerRandom(PLAYER_GREEN);
+        this.playerGreen = new ComputerPlayerMinimax(PLAYER_GREEN);
 
 
 
