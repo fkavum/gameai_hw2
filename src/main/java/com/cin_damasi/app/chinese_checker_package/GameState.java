@@ -234,21 +234,30 @@ public class GameState
         }
         
         
-        List<PiecePosition> forwardJumpPositions = piece.getForwardJumpPositions(currentPosition);
-        for (PiecePosition forwardJumpPosition: forwardJumpPositions)
+        List<PiecePosition> pieceStore = new ArrayList<PiecePosition>();
+        pieceStore.add(currentPosition);
+        while(pieceStore.size() != 0) 
         {
-        	
-        	PiecePosition middlePosition = getBetweenPosition(currentPosition,forwardJumpPosition);
-            //  check if positions are available
-            //available = empty AND within game board
-            if (!isPositionAvailable(middlePosition) && (isPositionAvailable(forwardJumpPosition)))
-            {
-                //  create a Move object from a piece, current position
-                //and the position after move
-                Move move = new Move(piece, currentPosition, forwardJumpPosition);
-                moves.add(move);
-            }
-        }
+        
+        	PiecePosition takenPosition = pieceStore.get(0);	
+        	List<PiecePosition> forwardJumpPositions = piece.getForwardJumpPositions(takenPosition);
+	        pieceStore.remove(takenPosition);
+	        for (PiecePosition forwardJumpPosition: forwardJumpPositions)
+	        {
+	        	PiecePosition middlePosition = getBetweenPosition(takenPosition,forwardJumpPosition);
+	            //  check if positions are available
+	            //available = empty AND within game board
+	            if (!isPositionAvailable(middlePosition) && (isPositionAvailable(forwardJumpPosition)))
+	            {
+	                //  create a Move object from a piece, current position
+	                //and the position after move
+	            	pieceStore.add(forwardJumpPosition);
+	                Move move = new Move(piece, takenPosition, forwardJumpPosition);
+	                moves.add(move);
+         
+	            }
+	        }
+	     }
         
         //  return list of found moves
         return moves;

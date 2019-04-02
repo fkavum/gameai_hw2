@@ -23,7 +23,8 @@ class ComputerPlayerMinimax extends ComputerPlayer
 	public int currentNodePlayer;
 	public GameStateMinimax currentNode;
 	public int currentLayer;
-	private int breakLevel = 4;
+	private int breakLevel = 1;
+	
 	
     public ComputerPlayerMinimax(int whichPlayer)
     {
@@ -200,7 +201,42 @@ class ComputerPlayerMinimax extends ComputerPlayer
             }
         }
         
+        //-------------------------------------
         
+        PiecePosition currentPos = new PiecePosition(row, col);
+        List<PiecePosition> pieceStore = new ArrayList<PiecePosition>();
+        pieceStore.add(currentPos);
+        while(pieceStore.size() != 0) 
+        {
+        
+        	PiecePosition takenPosition = pieceStore.get(0);	
+        	List<PiecePosition> forwardJumpPositions = getForwardJumpPositions(takenPosition.getRow(),takenPosition.getColumn());
+	        pieceStore.remove(takenPosition);
+	        for (PiecePosition forwardJumpPosition: forwardJumpPositions)
+	        {
+	        	PiecePosition middlePosition = getBetweenPosition(takenPosition.getRow(),takenPosition.getColumn(),forwardJumpPosition);
+	            //  check if positions are available
+	            //available = empty AND within game board
+	            if (!isPositionAvailable(middlePosition,gameStateArray) && (isPositionAvailable(forwardJumpPosition,gameStateArray)))
+	            {
+	                //  create a Move object from a piece, current position
+	                //and the position after move
+	            	pieceStore.add(forwardJumpPosition);
+	            	int [][] newState = createNewStateArray(currentPos.getRow(),currentPos.getColumn(), forwardJumpPosition, gameStateArray);
+	            	GameStateMinimax newNode = new GameStateMinimax(newState,this.currentNode,getPiecePosition(row,col),forwardJumpPosition);
+	            	if(this.breakLevel == newNode.stateLayer) {newNode.lastLayer();}
+	            	moves.add(newNode);
+         
+	            }
+	        }
+	     }
+        
+        
+        
+        
+        
+        //-----------------------------------
+        /*
         List<PiecePosition> forwardJumpPositions = getForwardJumpPositions(row, col);
         for (PiecePosition forwardJumpPosition: forwardJumpPositions)
         {
@@ -217,7 +253,7 @@ class ComputerPlayerMinimax extends ComputerPlayer
             	if(this.breakLevel == newNode.stateLayer) {newNode.lastLayer();}
             	moves.add(newNode);
             }
-        }
+        }*/
         
         //  return list of found moves
         return moves;
