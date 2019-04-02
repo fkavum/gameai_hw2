@@ -22,6 +22,8 @@ class ComputerPlayerMinimax extends ComputerPlayer
 	public List<GameStateMinimax> newLayer = new ArrayList<GameStateMinimax>();
 	public int currentNodePlayer;
 	public GameStateMinimax currentNode;
+	public int currentLayer;
+	private int breakLevel = 4;
 	
     public ComputerPlayerMinimax(int whichPlayer)
     {
@@ -59,7 +61,7 @@ class ComputerPlayerMinimax extends ComputerPlayer
         int randomInt = random.nextInt(availableMoves.size());
         Move randomMove = availableMoves.get(randomInt);*/
         
-        int breakLevel = 2;
+        this.currentLayer = 0;
         
         
         int [][] newStateArray = GameState.cloneGameState(gameState.getGameStateArray());
@@ -73,7 +75,7 @@ class ComputerPlayerMinimax extends ComputerPlayer
         while (unCalculatedNodes.size() != 0 ) {
 
         	this.currentNode = this.unCalculatedNodes.get(0);
-        	if (this.currentNode.stateLayer >= breakLevel) {break;}
+        	if (this.currentNode.stateLayer >= this.breakLevel) {break;}
         	
         	List<GameStateMinimax> nodes = generateNextNodes(this.currentNode);
         	
@@ -87,8 +89,11 @@ class ComputerPlayerMinimax extends ComputerPlayer
         	this.unCalculatedNodes.remove(this.currentNode);
         	
         	if(this.unCalculatedNodes.size() == 0 ) {
+        		if(this.newLayer.size() != 0 ) {
         		this.unCalculatedNodes.addAll(this.newLayer);
         		this.newLayer =  new ArrayList<GameStateMinimax>();
+        		
+        		}
         	}
         	
         	
@@ -128,6 +133,8 @@ class ComputerPlayerMinimax extends ComputerPlayer
     	
     	
     	List<GameStateMinimax> nodes = getAvailableMovesArray(gameState.stateArray);
+    	
+    	if(nodes.size() == 0) {gameState.lastLayer();}  //Burayi bir dusun.
     	
     	return nodes;
     }
@@ -186,7 +193,10 @@ class ComputerPlayerMinimax extends ComputerPlayer
                 //and the position after move
             	int [][] newState = createNewStateArray(row,col, forwardPosition, gameStateArray);
             	GameStateMinimax newNode = new GameStateMinimax(newState,this.currentNode,getPiecePosition(row,col),forwardPosition);
-                moves.add(newNode);
+                
+            	if(this.breakLevel == newNode.stateLayer) {newNode.lastLayer();}
+            	
+            	moves.add(newNode);
             }
         }
         
@@ -204,7 +214,8 @@ class ComputerPlayerMinimax extends ComputerPlayer
                 //and the position after move
             	int [][] newState = createNewStateArray(row,col, forwardJumpPosition, gameStateArray);
             	GameStateMinimax newNode = new GameStateMinimax(newState,this.currentNode,getPiecePosition(row,col),forwardJumpPosition);
-                moves.add(newNode);
+            	if(this.breakLevel == newNode.stateLayer) {newNode.lastLayer();}
+            	moves.add(newNode);
             }
         }
         
@@ -263,7 +274,8 @@ class ComputerPlayerMinimax extends ComputerPlayer
                 //and the position after move
             	int [][] newState = createNewStateArray(row,col, backwardPosition, gameStateArray);
             	GameStateMinimax newNode = new GameStateMinimax(newState,this.currentNode,getPiecePosition(row,col),backwardPosition);
-                moves.add(newNode);
+            	if(this.breakLevel == newNode.stateLayer) {newNode.lastLayer();}
+            	moves.add(newNode);
             }
         }
 

@@ -23,6 +23,8 @@ public class GameStateMinimax {
 	public int statePlayer;
 	public int score;
 	
+	public boolean lastLayer = false;
+	
 	 public GameStateMinimax(int [][] stateArray,GameStateMinimax previousState,PiecePosition prevPos,PiecePosition movedPos) {
 		 this.stateArray = stateArray;
 		 this.previousState = previousState;
@@ -59,8 +61,15 @@ public class GameStateMinimax {
 	        
 	        return myInt;
 	    }
+	 
+	 
+	 public void lastLayer() {
+		 this.lastLayer = true;
+	 }
+	 
 	private void calculateScore() {
 		
+		int point = 0;
 		
 		this.score = 0;
 		
