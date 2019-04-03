@@ -66,7 +66,7 @@ class ComputerPlayerMinimax extends ComputerPlayer
         
         
         int [][] newStateArray = GameState.cloneGameState(gameState.getGameStateArray());
-        GameStateMinimax originalState = new GameStateMinimax(newStateArray,null,null,null);
+        GameStateMinimax originalState = new GameStateMinimax(newStateArray,null,null,null,this.whichPlayer);
         
         this.gameStateTree = new ArrayList<GameStateMinimax>();
         this.unCalculatedNodes = new ArrayList<GameStateMinimax>();
@@ -193,7 +193,7 @@ class ComputerPlayerMinimax extends ComputerPlayer
                 //  create a Move object from a piece, current position
                 //and the position after move
             	int [][] newState = createNewStateArray(row,col, forwardPosition, gameStateArray);
-            	GameStateMinimax newNode = new GameStateMinimax(newState,this.currentNode,getPiecePosition(row,col),forwardPosition);
+            	GameStateMinimax newNode = new GameStateMinimax(newState,this.currentNode,getPiecePosition(row,col),forwardPosition,this.whichPlayer);
                 
             	if(this.breakLevel == newNode.stateLayer) {newNode.lastLayer();}
             	
@@ -223,7 +223,7 @@ class ComputerPlayerMinimax extends ComputerPlayer
 	                //and the position after move
 	            	pieceStore.add(forwardJumpPosition);
 	            	int [][] newState = createNewStateArray(currentPos.getRow(),currentPos.getColumn(), forwardJumpPosition, gameStateArray);
-	            	GameStateMinimax newNode = new GameStateMinimax(newState,this.currentNode,getPiecePosition(row,col),forwardJumpPosition);
+	            	GameStateMinimax newNode = new GameStateMinimax(newState,this.currentNode,getPiecePosition(row,col),forwardJumpPosition,this.whichPlayer);
 	            	if(this.breakLevel == newNode.stateLayer) {newNode.lastLayer();}
 	            	moves.add(newNode);
          
@@ -309,7 +309,7 @@ class ComputerPlayerMinimax extends ComputerPlayer
                 //  create a Move object from a piece, current position
                 //and the position after move
             	int [][] newState = createNewStateArray(row,col, backwardPosition, gameStateArray);
-            	GameStateMinimax newNode = new GameStateMinimax(newState,this.currentNode,getPiecePosition(row,col),backwardPosition);
+            	GameStateMinimax newNode = new GameStateMinimax(newState,this.currentNode,getPiecePosition(row,col),backwardPosition,this.whichPlayer);
             	if(this.breakLevel == newNode.stateLayer) {newNode.lastLayer();}
             	moves.add(newNode);
             }
