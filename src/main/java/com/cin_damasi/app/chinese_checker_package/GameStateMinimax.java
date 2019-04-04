@@ -83,7 +83,7 @@ public class GameStateMinimax {
 		 this.lastLayer = true;
 	 }
 	 
-	private void calculateScore() {
+	public void calculateScore() {
 		
 		int score = 0;
 		int tempScore = 0;
