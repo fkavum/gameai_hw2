@@ -22,7 +22,7 @@ class ComputerPlayerMinimax extends ComputerPlayer
 	public List<GameStateMinimax> newLayer = new ArrayList<GameStateMinimax>();
 	public List<GameStateMinimax> layer1 = new ArrayList<GameStateMinimax>();
 
-	private int breakLevel = 5;
+	private int breakLevel = 3;
 	
 	
     public ComputerPlayerMinimax(int whichPlayer)
@@ -52,17 +52,8 @@ class ComputerPlayerMinimax extends ComputerPlayer
      * You will implement this function in homework
      */
     public Move getMove(GameState gameState)
-    {
-    //  get possible moves the player can make
-        List<Move> availableMoves = this.getAvailableMoves(gameState);
-
-        //  select a random move	//
-        /*Random random = new Random();
-        int randomInt = random.nextInt(availableMoves.size());
-        Move randomMove = availableMoves.get(randomInt);*/
-        
-        
-        
+    {  
+           
         
         int [][] newStateArray = GameState.cloneGameState(gameState.getGameStateArray());
         GameStateMinimax originalState = new GameStateMinimax(newStateArray,null,null,null,this.whichPlayer);
@@ -153,7 +144,7 @@ public GameStateMinimax selectedNode(GameStateMinimax gamestate) {
     	
     	GameStateMinimax theBest = null;
     	
-    	if (gamestate.statePlayer == this.whichPlayer) {
+    	if (gamestate.stateOpponent == this.whichPlayer) {
     		int bestScore = -999999;
     		
     		for (GameStateMinimax nextNode: nodes) {
@@ -193,13 +184,6 @@ public GameStateMinimax selectedNode(GameStateMinimax gamestate) {
     
     public List<GameStateMinimax> generateNextNodes(GameStateMinimax gameState) {
     	
-    	if(gameState.statePlayer == PLAYER_RED) {
-    		gameState.statePlayer = PLAYER_GREEN;
-    	}else {
-    		gameState.statePlayer = PLAYER_RED;
-    	}
-    	
-    	
     	List<GameStateMinimax> nodes = getAvailableMovesArray(gameState);
     	
     	if(nodes.size() == 0) {gameState.lastLayer();}  //Burayi bir dusun.
@@ -229,7 +213,7 @@ public GameStateMinimax selectedNode(GameStateMinimax gamestate) {
             for (int col = 0; col < 8; ++col)
             {
                 //  check if there is a square in location
-                if (gameStateArray.stateArray[row][col] == gameStateArray.statePlayer)     //row -- column
+                if (gameStateArray.stateArray[row][col] == gameStateArray.stateOpponent)     //row -- column
                 {
                 	 availableForwardMoves.addAll(this.getNextMovesForwardArray(row,col,gameStateArray));
                 }
@@ -312,7 +296,7 @@ public GameStateMinimax selectedNode(GameStateMinimax gamestate) {
             for (int col = 0; col < 8; ++col)
             {
                 //  check if there is a square in location
-                if (gameStateArray.stateArray[row][col] == gameStateArray.statePlayer)     //row -- column
+                if (gameStateArray.stateArray[row][col] == gameStateArray.stateOpponent)     //row -- column
                 {
                 	availableBackwardMoves.addAll(this.getNextMovesBackwardArray(row,col,gameStateArray));
                 }
@@ -388,13 +372,13 @@ public GameStateMinimax selectedNode(GameStateMinimax gamestate) {
     {
         List<PiecePosition> poses = new ArrayList<PiecePosition>();
 
-        if (currentGameState.statePlayer == PLAYER_RED)
+        if (currentGameState.stateOpponent == PLAYER_RED)
         {
             //  red pieces go upper left when moving forward
             poses.add(new PiecePosition(row-1, col));
             poses.add(new PiecePosition(row, col-1));
         }
-        else if (currentGameState.statePlayer == PLAYER_GREEN)
+        else if (currentGameState.stateOpponent == PLAYER_GREEN)
         {
             //  green pieces go bottom right when moving forward
             poses.add(new PiecePosition(row+1, col));
@@ -409,13 +393,13 @@ public GameStateMinimax selectedNode(GameStateMinimax gamestate) {
         List<PiecePosition> poses = new ArrayList<PiecePosition>();
 
 
-        if (currentGameState.statePlayer == PLAYER_RED)
+        if (currentGameState.stateOpponent == PLAYER_RED)
         {
             //  red pieces go upper left when moving forward
             poses.add(new PiecePosition(row-2, col));
             poses.add(new PiecePosition(row, col-2));
         }
-        else if (currentGameState.statePlayer == PLAYER_GREEN)
+        else if (currentGameState.stateOpponent == PLAYER_GREEN)
         {
             //  green pieces go bottom right when moving forward
             poses.add(new PiecePosition(row+2, col));
@@ -429,14 +413,14 @@ public GameStateMinimax selectedNode(GameStateMinimax gamestate) {
     {
         List<PiecePosition> poses = new ArrayList<PiecePosition>();
 
-        if (currentGameState.statePlayer == PLAYER_RED)
+        if (currentGameState.stateOpponent == PLAYER_RED)
         {
             //  red pieces go bottom right when going backward
             poses.add(new PiecePosition(row+1, col));
             poses.add(new PiecePosition(row, col+1));
             
         }
-        else if (currentGameState.statePlayer == PLAYER_GREEN)
+        else if (currentGameState.stateOpponent == PLAYER_GREEN)
         {
             //  green pieces go upper left when going backward
             poses.add(new PiecePosition(row-1, col));
@@ -486,13 +470,13 @@ public GameStateMinimax selectedNode(GameStateMinimax gamestate) {
     {
 
         //  red pieces go to upper left
-        if (currentGameState.statePlayer == PLAYER_RED)
+        if (currentGameState.stateOpponent == PLAYER_RED)
         {
             return row >= 0 && col>= 0 && row < 3 && col< 3;
         }
 
         //  green pieces go to bottom right
-        else if (currentGameState.statePlayer == PLAYER_GREEN)
+        else if (currentGameState.stateOpponent == PLAYER_GREEN)
         {
             return row >= 5 && col >= 5 && row < 8 && col< 8;
         }
@@ -507,7 +491,7 @@ public GameStateMinimax selectedNode(GameStateMinimax gamestate) {
     	int [][] newStateArray = GameStateMinimax.cloneGameState(gameStateArray.stateArray);
     	
     	newStateArray[row][col] = PLAYER_NONE;
-    	newStateArray[newPosition.getRow()][newPosition.getColumn()] = gameStateArray.statePlayer;
+    	newStateArray[newPosition.getRow()][newPosition.getColumn()] = gameStateArray.stateOpponent;
     	
     	return newStateArray;
     } 

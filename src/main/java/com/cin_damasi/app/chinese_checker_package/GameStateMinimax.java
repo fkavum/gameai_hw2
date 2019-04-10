@@ -27,6 +27,7 @@ public class GameStateMinimax {
 	
 	public int stateLayer;
 	public int statePlayer;
+	public int stateOpponent;
 	public int minMaxPlayer;
 	public int score;
 	
@@ -45,8 +46,10 @@ public class GameStateMinimax {
 			 
 			 if (minMaxPlayer == PLAYER_RED) {
 				 this.statePlayer = PLAYER_GREEN;
+				 this.stateOpponent = PLAYER_RED;
 			 }else if (minMaxPlayer == PLAYER_GREEN) {
 				 this.statePlayer = PLAYER_RED;
+				 this.stateOpponent = PLAYER_GREEN;
 			 }else {
 				 System.out.println("Unexpected error while creating tree. StateId: "+this.stateId);
 			 }
@@ -58,8 +61,10 @@ public class GameStateMinimax {
 			 
 			 if (this.previousState.statePlayer == PLAYER_RED) {
 				 this.statePlayer = PLAYER_GREEN;
+				 this.stateOpponent = PLAYER_RED;
 			 }else if(this.previousState.statePlayer == PLAYER_GREEN) {
 				 this.statePlayer = PLAYER_RED;
+				 this.stateOpponent = PLAYER_GREEN;
 			 }else {
 				 System.out.println("Unexpected error while creating tree. StateId: "+this.stateId);
 			 }
