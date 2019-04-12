@@ -1,0 +1,47 @@
+   /*
+        this.gameStateTree = new ArrayList<GameStateMinimax>();
+        this.unCalculatedNodes = new ArrayList<GameStateMinimax>();
+        this.gameStateTree.add(originalState);
+        this.unCalculatedNodes.add(originalState);
+         
+        while (unCalculatedNodes.size() != 0 ) {
+
+        	GameStateMinimax currentNode = this.unCalculatedNodes.get(0);
+        	if (currentNode.stateLayer >= this.breakLevel) {break;}
+        	
+        	List<GameStateMinimax> nodes = generateNextNodes(currentNode);
+        	
+        	for (GameStateMinimax newNode: nodes)
+            {
+        		
+        		this.gameStateTree.add(newNode);
+                this.newLayer.add(newNode);
+            }
+        	
+        	this.unCalculatedNodes.remove(currentNode);
+        	
+        	if(this.unCalculatedNodes.size() == 0 ) {
+        		if(this.newLayer.size() != 0 ) {
+        		this.unCalculatedNodes.addAll(this.newLayer);
+        		this.newLayer =  new ArrayList<GameStateMinimax>();
+        		
+        		}
+        	}
+
+        }
+        
+        
+        
+        // SELECT NDOE ------------------------------------------
+        
+        
+        for (GameStateMinimax state: this.gameStateTree) {
+        	if (state.lastLayer) {
+        		state.calculateScore();
+        	}
+        }*/
+
+        
+        // SELECT NODE -------------------------------------------
+
+        //GameStateMinimax selectedNode = gameStateTree.get(10);

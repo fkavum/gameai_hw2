@@ -17,7 +17,7 @@ class ComputerPlayerMinimax extends ComputerPlayer
 	public List<GameStateMinimax> newLayer = new ArrayList<GameStateMinimax>();
 	public List<GameStateMinimax> layer1 = new ArrayList<GameStateMinimax>();
 
-	private int breakLevel = 5;
+	private int breakLevel = 6;
 	
 	
     public ComputerPlayerMinimax(int whichPlayer)
@@ -29,9 +29,52 @@ class ComputerPlayerMinimax extends ComputerPlayer
     /* 
      * You will implement this function in homework
      */
-    private int calculateStateHeuristicValue_1(GameStateMinimax state)
+    private void calculateStateHeuristicValue_1(GameStateMinimax state)
     {
-        return 0;
+    	
+    	int winner = isGameFinished(state.stateArray);
+    	if (winner == state.minMaxPlayer) {
+    		state.score = 100;
+    	}else if(winner == 0) {
+		int score = 0;
+		int tempScore = 0;
+		int redCounter = 0; //00-01-02 // 10-11-12 // 20-21-22
+		int greenCounter = 0; //55-56-57//65-66-67//75-76-77
+		
+		 for (int row = 0; row < 8; ++row)
+	        {
+	            for (int col = 0; col < 8; ++col)
+	            {        	
+	            	switch (state.stateArray[row][col]) {
+	            	case 0:
+	            		break;
+	            	case PLAYER_RED:
+	            		tempScore =  manhattanDist(row,col,PLAYER_RED,redCounter); //ne kadar kücükse o kadar iyi red için. 1-5
+	            		if (state.minMaxPlayer == PLAYER_RED) {
+	            			score -= tempScore;
+	            		}else {
+	            			score += tempScore;
+	            		}
+	            		redCounter +=1;
+	            		break;
+	            	case PLAYER_GREEN:
+	            		tempScore =  manhattanDist(row,col,PLAYER_GREEN,greenCounter);
+	            		if (state.minMaxPlayer == PLAYER_RED) {
+	            			score += tempScore;
+	            		}else {
+	            			score -= tempScore;
+	            		}
+	            		greenCounter +=1;
+	            		break;
+	            	default:
+	            		//System.out.println("StateId:" + state.stateId + " has unexpected piece");
+	            	}
+	            }
+	        }
+		
+		 state.score = score;}else {
+			 state.score = -100;
+		 }
     }
 
     /* 
@@ -43,6 +86,21 @@ class ComputerPlayerMinimax extends ComputerPlayer
     }
 
     
+	private int manhattanDist(int row,int col, int player,int counter) {
+		
+		int[] dest = null;
+		
+		
+		if (player == PLAYER_RED) {
+			dest = GameStateMinimax.redDestList.get(counter);
+		}else if (player == PLAYER_GREEN) {
+			dest = GameStateMinimax.greenDestList.get(counter);
+		}
+		int returnValue = Math.abs(row-dest[0])+Math.abs(col-dest[1]);
+		return returnValue;
+	}
+	
+    
     /* 
      * You will implement this function in homework
      */
@@ -51,55 +109,8 @@ class ComputerPlayerMinimax extends ComputerPlayer
         int [][] newStateArray = GameState.cloneGameState(gameState.getGameStateArray());
         GameStateMinimax originalState = new GameStateMinimax(newStateArray,null,null,null,this.whichPlayer);
         
-        GameStateMinimax selectedNode = selectedNode(originalState,999);
+        GameStateMinimax selectedNode = selectNode(originalState,999);
         
-        /*
-        this.gameStateTree = new ArrayList<GameStateMinimax>();
-        this.unCalculatedNodes = new ArrayList<GameStateMinimax>();
-        this.gameStateTree.add(originalState);
-        this.unCalculatedNodes.add(originalState);
-         
-        while (unCalculatedNodes.size() != 0 ) {
-
-        	GameStateMinimax currentNode = this.unCalculatedNodes.get(0);
-        	if (currentNode.stateLayer >= this.breakLevel) {break;}
-        	
-        	List<GameStateMinimax> nodes = generateNextNodes(currentNode);
-        	
-        	for (GameStateMinimax newNode: nodes)
-            {
-        		
-        		this.gameStateTree.add(newNode);
-                this.newLayer.add(newNode);
-            }
-        	
-        	this.unCalculatedNodes.remove(currentNode);
-        	
-        	if(this.unCalculatedNodes.size() == 0 ) {
-        		if(this.newLayer.size() != 0 ) {
-        		this.unCalculatedNodes.addAll(this.newLayer);
-        		this.newLayer =  new ArrayList<GameStateMinimax>();
-        		
-        		}
-        	}
-
-        }
-        
-        
-        
-        // SELECT NDOE ------------------------------------------
-        
-        
-        for (GameStateMinimax state: this.gameStateTree) {
-        	if (state.lastLayer) {
-        		state.calculateScore();
-        	}
-        }*/
-
-        
-        // SELECT NODE -------------------------------------------
-
-        //GameStateMinimax selectedNode = gameStateTree.get(10);
         Piece selectedPiece = null;
         for (Piece piece: this.pieces)
         {
@@ -111,8 +122,7 @@ class ComputerPlayerMinimax extends ComputerPlayer
     		}
     		
         }
-        
-        
+
         Move move = new Move(selectedPiece, selectedPiece.getPosition(), selectedNode.movedPos);
         System.out.println("MOVE YAPILDI");
         return move;   	
@@ -120,12 +130,15 @@ class ComputerPlayerMinimax extends ComputerPlayer
     
     
     
-public GameStateMinimax selectedNode(GameStateMinimax gamestate, int givenScore) {
+public GameStateMinimax selectNode(GameStateMinimax gamestate, int givenScore) {
     	
     	List<GameStateMinimax> nodes = generateNextNodes(gamestate);
-    	//List<GameStateMinimax> nextNodes = new ArrayList<GameStateMinimax>();
     	if(nodes.get(0).stateLayer == this.breakLevel) {
-    		//System.out.println("Hi there");
+    		
+    		for (GameStateMinimax node:nodes) {
+    			calculateStateHeuristicValue_1(node);
+    		}
+
     	}else {
     	
     		int tempBestScore = 9999;
@@ -133,17 +146,22 @@ public GameStateMinimax selectedNode(GameStateMinimax gamestate, int givenScore)
     		int deleteIndex = 0;
     		
     	for (GameStateMinimax node: nodes) {
-    		
     		if (skip) {
     			
     			while (nodes.size() > deleteIndex +1 ) {
-    				System.out.println("Deleted at level:" + node.stateLayer);
+    				//System.out.println("Deleted at level:" + node.stateLayer);
     				nodes.remove(nodes.size() -1);
     			}
     			
     			break;}
     		
-    		node.score = selectedNode(node,tempBestScore).score;
+    		if (isGameFinished(node.stateArray) != 0) {
+    			calculateStateHeuristicValue_1(node);
+    			continue;
+    		}
+    		
+    		
+    		node.score = selectNode(node,tempBestScore).score;
     		
     		if (this.whichPlayer != node.statePlayer) {
     			tempBestScore = node.score;
@@ -155,10 +173,6 @@ public GameStateMinimax selectedNode(GameStateMinimax gamestate, int givenScore)
     				skip = true;
     			}
     		}
-    		
-    		/*GameStateMinimax nextNode = selectedNode(node);
-    		node.score = nextNode.score;
-    		nextNodes.add(node);}*/
     	}}
     	
     	GameStateMinimax theBest = null;
@@ -245,14 +259,9 @@ public GameStateMinimax selectedNode(GameStateMinimax gamestate, int givenScore)
 
     public List<GameStateMinimax> getNextMovesForwardArray(int row, int col,GameStateMinimax gameStateArray)
     {
-        //  function will returns list of possible Moves
-        //the piece can perform
+
         List<GameStateMinimax> moves = new ArrayList<GameStateMinimax>();
         
-        //  get position information of piece
-        int i = row;
-        int j = col;
-
         
         List<PiecePosition> forwardPositions = getForwardPositions(row, col,gameStateArray);
         for (PiecePosition forwardPosition: forwardPositions)
@@ -260,8 +269,7 @@ public GameStateMinimax selectedNode(GameStateMinimax gamestate, int givenScore)
             
             if (isPositionAvailable(forwardPosition,gameStateArray.stateArray))
             {
-                //  create a Move object from a piece, current position
-                //and the position after move
+
             	int [][] newState = createNewStateArray(row,col, forwardPosition, gameStateArray);
             	GameStateMinimax newNode = new GameStateMinimax(newState,gameStateArray,getPiecePosition(row,col),forwardPosition,this.whichPlayer);
                 
@@ -329,15 +337,8 @@ public GameStateMinimax selectedNode(GameStateMinimax gamestate, int givenScore)
     public List<GameStateMinimax> getNextMovesBackwardArray(int row, int col,GameStateMinimax gameStateArray)
     {
 
-        //  function will returns list of possible Moves
-        //the piece can perform
         List<GameStateMinimax> moves = new ArrayList<GameStateMinimax>();
         
-        //  get position information of piece
-        int i = row;
-        int j = col;
-
-        //  check if piece in destination area
         if (!isPieceInGoal(row,col,gameStateArray))
         {
             //  return empty list of moves
@@ -514,5 +515,63 @@ public GameStateMinimax selectedNode(GameStateMinimax gamestate, int givenScore)
     	
     	return newStateArray;
     } 
+    
+    public int isGameFinished(int [][] gameStateArray)
+    {
+    	int result = 0; // 1 is redwon - 2 is greenWon 
+        
+        //  check if all red pieces at top left
+        int redCounter = 0;
+        for (int row = 0; row < 3; ++row)
+        {
+            for (int col = 0; col < 3; ++col)
+            {
+                if (gameStateArray[row][col] == PLAYER_RED)
+                {
+                    ++redCounter;
+                }
+            }
+        }
+        //  return red player as winning player
+        if (redCounter == 9)
+        {
+        	result = PLAYER_RED;
+            return result;
+        }
+
+
+        //  check if all green pieces at bottom right
+        int greenCounter = 0;
+        for (int row = 5; row < 8; ++row)
+        {
+            for (int col = 5; col < 8; ++col)
+            {
+                if (gameStateArray[row][col] == PLAYER_GREEN)
+                {
+                    ++greenCounter;
+                }
+            }
+        }
+        //  return green player as winning player
+        if (greenCounter == 9)
+        {
+        	result = PLAYER_GREEN;
+            return result;
+        }
+
+
+        /*// check if game is drawn
+        if (GameState.isGameDraw(gameStateArray))
+        {
+            return GameResult.DRAW;
+        }*/
+
+        //  no player won
+         return result;
+    }
+
+    
+    
+    
     
 }

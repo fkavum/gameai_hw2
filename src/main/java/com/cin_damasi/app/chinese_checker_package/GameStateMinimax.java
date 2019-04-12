@@ -16,8 +16,8 @@ public class GameStateMinimax {
 
 	public static List<int[]> redDestList = new ArrayList<int[]>(); 
 	public static List<int[]> greenDestList = new ArrayList<int[]>();
-	private static int idCounter = 0;
-	public int stateId;
+	//private static int idCounter = 0;
+	//public int stateId;
 	
 	public int [][] stateArray;	
 	public GameStateMinimax previousState;
@@ -39,8 +39,8 @@ public class GameStateMinimax {
 		 this.prevPos = prevPos;
 		 this.movedPos = movedPos;
 		 this.minMaxPlayer = minMaxPlayer;
-		 this.stateId = GameStateMinimax.idCounter;
-		 GameStateMinimax.idCounter = GameStateMinimax.idCounter + 1;
+		 //this.stateId = GameStateMinimax.idCounter;
+		// GameStateMinimax.idCounter = GameStateMinimax.idCounter + 1;
 		 
 		 if (previousState == null) {
 			 
@@ -51,7 +51,7 @@ public class GameStateMinimax {
 				 this.statePlayer = PLAYER_RED;
 				 this.stateOpponent = PLAYER_GREEN;
 			 }else {
-				 System.out.println("Unexpected error while creating tree. StateId: "+this.stateId);
+				// System.out.println("Unexpected error while creating tree. StateId: "+this.stateId);
 			 }
 			 
 			 this.stateLayer = 0;
@@ -66,12 +66,11 @@ public class GameStateMinimax {
 				 this.statePlayer = PLAYER_RED;
 				 this.stateOpponent = PLAYER_GREEN;
 			 }else {
-				 System.out.println("Unexpected error while creating tree. StateId: "+this.stateId);
+				// System.out.println("Unexpected error while creating tree. StateId: "+this.stateId);
 			 }
 			 
 		 }
-	        // initilaze initial state if no arguments constructor
-	        calculateScore();
+	       
 	    
 	    }
 	
@@ -88,65 +87,6 @@ public class GameStateMinimax {
 		 this.lastLayer = true;
 	 }
 	 
-	public void calculateScore() {
-		
-		int score = 0;
-		int tempScore = 0;
-		int redCounter = 0; //00-01-02 // 10-11-12 // 20-21-22
-		int greenCounter = 0; //55-56-57//65-66-67//75-76-77
-		
-		 for (int row = 0; row < 8; ++row)
-	        {
-	            for (int col = 0; col < 8; ++col)
-	            {        	
-	            	switch (this.stateArray[row][col]) {
-	            	case 0:
-	            		break;
-	            	case PLAYER_RED:
-	            		tempScore =  manhattanDist(row,col,PLAYER_RED,redCounter); //ne kadar kücükse o kadar iyi red için. 1-5
-	            		if (this.minMaxPlayer == PLAYER_RED) {
-	            			score -= tempScore;
-	            		}else {
-	            			score += tempScore;
-	            		}
-	            		redCounter +=1;
-	            		break;
-	            	case PLAYER_GREEN:
-	            		tempScore =  manhattanDist(row,col,PLAYER_GREEN,greenCounter);
-	            		if (this.minMaxPlayer == PLAYER_RED) {
-	            			score += tempScore;
-	            		}else {
-	            			score -= tempScore;
-	            		}
-	            		greenCounter +=1;
-	            		break;
-	            	default:
-	            		System.out.println("StateId:" + this.stateId + " has unexpected piece");
-	            	}
-	            }
-	        }
-		
-		this.score = score;
-		
-	}
-	
-	
-	private int manhattanDist(int row,int col, int player,int counter) {
-		
-		int[] dest = null;
-		
-		
-		if (player == PLAYER_RED) {
-			dest = GameStateMinimax.redDestList.get(counter);
-		}else if (player == PLAYER_GREEN) {
-			dest = GameStateMinimax.greenDestList.get(counter);
-		}
-		int returnValue = Math.abs(row-dest[0])+Math.abs(col-dest[1]);
-		return returnValue;
-	}
-	
-	
-
 	
 	
 	public static void initializeDestinations() {
@@ -187,59 +127,8 @@ public class GameStateMinimax {
         return false;
     }*/
 
-    
-    public GameResult isGameFinished(int [][] gameStateArray)
-    {
-        
-        //  check if all red pieces at top left
-        int redCounter = 0;
-        for (int row = 0; row < 3; ++row)
-        {
-            for (int col = 0; col < 3; ++col)
-            {
-                if (gameStateArray[row][col] == PIECE_COLOR_RED_PIECE)
-                {
-                    ++redCounter;
-                }
-            }
-        }
-        //  return red player as winning player
-        if (redCounter == 9)
-        {
-            return GameResult.RED_WON;
-        }
-
-
-        //  check if all green pieces at bottom right
-        int greenCounter = 0;
-        for (int row = 5; row < 8; ++row)
-        {
-            for (int col = 5; col < 8; ++col)
-            {
-                if (gameStateArray[row][col] == PIECE_COLOR_GREEN_PIECE)
-                {
-                    ++greenCounter;
-                }
-            }
-        }
-        //  return green player as winning player
-        if (greenCounter == 9)
-        {
-            return GameResult.GREEN_WON;
-        }
-
-/*
-        // check if game is drawn
-        if (GameState.isGameDraw(gameStateArray))
-        {
-            return GameResult.DRAW;
-        }*/
-
-        //  no player won
-        return GameResult.CONTINUE;
-    }
-
-    
+    /*
+   
     
     
 	/*
