@@ -17,7 +17,7 @@ class ComputerPlayerMinimax extends ComputerPlayer
 	public List<GameStateMinimax> newLayer = new ArrayList<GameStateMinimax>();
 	public List<GameStateMinimax> layer1 = new ArrayList<GameStateMinimax>();
 
-	private int breakLevel = 6;
+	private int breakLevel = 4;
 	
 	
     public ComputerPlayerMinimax(int whichPlayer)
@@ -67,7 +67,7 @@ class ComputerPlayerMinimax extends ComputerPlayer
 	            		greenCounter +=1;
 	            		break;
 	            	default:
-	            		//System.out.println("StateId:" + state.stateId + " has unexpected piece");
+	            		System.out.println("StateId:" + state.stateId + " has unexpected piece");
 	            	}
 	            }
 	        }
@@ -80,9 +80,142 @@ class ComputerPlayerMinimax extends ComputerPlayer
     /* 
      * You will implement this function in homework
      */
-    private int calculateStateHeuristicValue_2(GameStateMinimax state)
+    private void calculateStateHeuristicValue_2(GameStateMinimax state)
     {
-        return 0;
+    	int winner = isGameFinished(state.stateArray);
+    	if (winner == state.minMaxPlayer) {
+    		state.score = 900;
+    	}else if(winner == 0) {
+		int score = 0;
+		int tempScore = 0;
+		int penalty =0;
+		
+		int row0 = 0;
+		int row1 = 0;
+		
+		int col0 = 0;
+		int col1= 0;
+		
+		
+		
+		int col6= 0;
+		int col7= 0;
+		
+		int row6= 0;
+		int row7= 0;
+		
+		 for (int row = 0; row < 8; ++row)
+	        {
+	            for (int col = 0; col < 8; ++col)
+	            {        	
+	            	switch (state.stateArray[row][col]) {
+	            	case 0:
+	            		break;
+	            	case PLAYER_RED:
+	            		tempScore =  Math.abs(row-0)+Math.abs(col-0); //ne kadar kücükse o kadar iyi red için. 1-5
+	            		
+	            		if (row == 7 && col == 7 ) {tempScore +=1;}
+	            		if (row == 6 && col == 7 ) {tempScore +=1;}
+	            		if(state.minMaxPlayer ==PLAYER_RED) {
+	            		switch (row) {
+	            		case 0:
+	            			row0 += 1;
+	            			break;
+	            		case 1:
+	            			row1 += 1;
+	            			break;
+	            	
+	            		}switch(col) {
+	            			case 0:
+	            				col0 += 1;
+	            				break;
+	            			case 1:
+	            				col1 += 1;
+	            				break;
+	            		
+	            		}
+	            		penalty = 0;
+	            		if (row0 >3 || col0>3) {
+	            			penalty = 100;
+	            		}
+	            		if (row1 >6 || col1>6) {
+	            			penalty = 100;
+	            		}
+	            		if ((row1 >5 && row0 > 0)|| (col1>5 && col0 > 0 )) {
+	            			penalty = 100;
+	            		}
+	            		if ((row1 >4 && row0 > 1)|| (col1>4 && col0 > 1 )) {
+	            			penalty = 100;
+	            		}
+	            		if ((row1 >3 && row0 > 2)|| (col1>3 && col0 > 2 )) {
+	            			penalty = 100;
+	            		}}
+	            			            		
+	            		if (state.minMaxPlayer == PLAYER_RED) {
+	            			score -= tempScore;
+	            			score -= penalty;
+	            		}else {
+	            			score += tempScore;
+	            			//score += penalty;
+	            		}
+	            		break;
+	            	case PLAYER_GREEN:
+	            		tempScore =  Math.abs(row-7)+Math.abs(col-7);
+	            		if (row == 0 && col == 0 ) {tempScore +=1;}
+	            		if (state.minMaxPlayer == PLAYER_GREEN) {
+	            		switch (row) {
+	            		
+	            		case 6:
+	            			row6 += 1;
+	            			break;
+	            		case 7:
+	            			row7 += 1;
+	            			break;
+	            		}switch(col) {
+	            			
+	            			case 6:
+	            				col6 += 1;
+	            				break;
+	            			case 7:
+	            				col7 += 1;
+	            				break;
+	            		}
+	            		
+	            		penalty = 0;
+	            		if (row7 >3 || col7>3) {
+	            			penalty = 100;
+	            		}
+	            		if (row6 >6 || col6>6) {
+	            			penalty = 100;
+	            		}
+	            		if ((row6 >5 && row7 > 0)|| (col6>5 && col7 > 0 )) {
+	            			penalty = 100;
+	            		}
+	            		if ((row6 >4 && row7 > 1)|| (col6>4 && col7 > 1 )) {
+	            			penalty = 100;
+	            		}
+	            		if ((row6 >3 && row7 > 2)|| (col6>3 && col7 > 2 )) {
+	            			penalty = 100;
+	            		}}
+	            		
+	            		if (state.minMaxPlayer == PLAYER_RED) {
+	            			score += tempScore;
+	            			//score += penalty;
+	            		}else {
+	            			score -= tempScore;
+	            			score -= penalty;
+	            		}
+	            		
+	            		break;
+	            	default:
+	            		System.out.println("StateId:" + state.stateId + " has unexpected piece");
+	            	}
+	            }
+	        }
+		
+		 state.score = score;}else {
+			 state.score = -900;
+		 }
     }
 
     
@@ -136,12 +269,12 @@ public GameStateMinimax selectNode(GameStateMinimax gamestate, int givenScore) {
     	if(nodes.get(0).stateLayer == this.breakLevel) {
     		
     		for (GameStateMinimax node:nodes) {
-    			calculateStateHeuristicValue_1(node);
+    			calculateStateHeuristicValue_2(node);
     		}
 
     	}else {
     	
-    		int tempBestScore = 9999;
+    		int tempBestScore = 999999;
     		boolean skip = false;
     		int deleteIndex = 0;
     		
@@ -156,7 +289,7 @@ public GameStateMinimax selectNode(GameStateMinimax gamestate, int givenScore) {
     			break;}
     		
     		if (isGameFinished(node.stateArray) != 0) {
-    			calculateStateHeuristicValue_1(node);
+    			calculateStateHeuristicValue_2(node);
     			continue;
     		}
     		
