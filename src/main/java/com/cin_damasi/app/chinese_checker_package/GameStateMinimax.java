@@ -146,17 +146,7 @@ public class GameStateMinimax {
 	}
 	
 	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
+
 	
 	
 	public static void initializeDestinations() {

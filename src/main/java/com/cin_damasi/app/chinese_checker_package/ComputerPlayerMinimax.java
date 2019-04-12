@@ -1,11 +1,6 @@
 package com.cin_damasi.app.chinese_checker_package;
 
-import java.util.Random;
-
-import static com.cin_damasi.app.chinese_checker_package.ProjectDefinitions.PIECE_COLOR_GREEN_PIECE;
 import static com.cin_damasi.app.chinese_checker_package.ProjectDefinitions.PIECE_COLOR_NO_PIECE;
-import static com.cin_damasi.app.chinese_checker_package.ProjectDefinitions.PIECE_COLOR_RED_PIECE;
-
 import static com.cin_damasi.app.chinese_checker_package.ProjectDefinitions.PLAYER_NONE;
 import static com.cin_damasi.app.chinese_checker_package.ProjectDefinitions.PLAYER_RED;
 import static com.cin_damasi.app.chinese_checker_package.ProjectDefinitions.PLAYER_GREEN;
@@ -22,7 +17,7 @@ class ComputerPlayerMinimax extends ComputerPlayer
 	public List<GameStateMinimax> newLayer = new ArrayList<GameStateMinimax>();
 	public List<GameStateMinimax> layer1 = new ArrayList<GameStateMinimax>();
 
-	private int breakLevel = 3;
+	private int breakLevel = 5;
 	
 	
     public ComputerPlayerMinimax(int whichPlayer)
@@ -34,7 +29,7 @@ class ComputerPlayerMinimax extends ComputerPlayer
     /* 
      * You will implement this function in homework
      */
-    private int calculateStateHeuristicValue_1(GameState state)
+    private int calculateStateHeuristicValue_1(GameStateMinimax state)
     {
         return 0;
     }
@@ -42,7 +37,7 @@ class ComputerPlayerMinimax extends ComputerPlayer
     /* 
      * You will implement this function in homework
      */
-    private int calculateStateHeuristicValue_2(GameState state)
+    private int calculateStateHeuristicValue_2(GameStateMinimax state)
     {
         return 0;
     }
@@ -53,12 +48,10 @@ class ComputerPlayerMinimax extends ComputerPlayer
      */
     public Move getMove(GameState gameState)
     {  
-           
-        
         int [][] newStateArray = GameState.cloneGameState(gameState.getGameStateArray());
         GameStateMinimax originalState = new GameStateMinimax(newStateArray,null,null,null,this.whichPlayer);
         
-        GameStateMinimax selectedNode = selectedNode(originalState);
+        GameStateMinimax selectedNode = selectedNode(originalState,999);
         
         /*
         this.gameStateTree = new ArrayList<GameStateMinimax>();
@@ -127,16 +120,42 @@ class ComputerPlayerMinimax extends ComputerPlayer
     
     
     
-public GameStateMinimax selectedNode(GameStateMinimax gamestate) {
+public GameStateMinimax selectedNode(GameStateMinimax gamestate, int givenScore) {
     	
     	List<GameStateMinimax> nodes = generateNextNodes(gamestate);
     	//List<GameStateMinimax> nextNodes = new ArrayList<GameStateMinimax>();
     	if(nodes.get(0).stateLayer == this.breakLevel) {
-    		System.out.println("Hi there");
+    		//System.out.println("Hi there");
     	}else {
     	
+    		int tempBestScore = 9999;
+    		boolean skip = false;
+    		int deleteIndex = 0;
+    		
     	for (GameStateMinimax node: nodes) {
-    		node.score = selectedNode(node).score;
+    		
+    		if (skip) {
+    			
+    			while (nodes.size() > deleteIndex +1 ) {
+    				System.out.println("Deleted at level:" + node.stateLayer);
+    				nodes.remove(nodes.size() -1);
+    			}
+    			
+    			break;}
+    		
+    		node.score = selectedNode(node,tempBestScore).score;
+    		
+    		if (this.whichPlayer != node.statePlayer) {
+    			tempBestScore = node.score;
+    		}
+    		
+    		if (this.whichPlayer == node.statePlayer) {
+    			if (node.score > givenScore) {
+    				deleteIndex = nodes.indexOf(node);
+    				skip = true;
+    			}
+    		}
+    		
     		/*GameStateMinimax nextNode = selectedNode(node);
     		node.score = nextNode.score;
     		nextNodes.add(node);}*/

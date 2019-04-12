@@ -26,14 +26,11 @@ public class Game implements PieceListener, SquareListener, Runnable
 {
     //  class that handles GUI stuff
     private BoardCreator board;
-
     //  game window, outer JFrame
     private JFrame gameWindow;
-
     //  class that keeps (current) game state
     private GameState currentState;
 
-    
     //  player information
     private Player playerRed;
     private Player playerGreen;
