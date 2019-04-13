@@ -8,8 +8,9 @@ import static com.cin_damasi.app.chinese_checker_package.ProjectDefinitions.PLAY
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Collections;
 
-class ComputerPlayerMinimax extends ComputerPlayer
+class ComputerPlayerAbuser extends ComputerPlayer
 {
 	
 	public List<GameStateMinimax> gameStateTree = new ArrayList<GameStateMinimax>();
@@ -17,71 +18,24 @@ class ComputerPlayerMinimax extends ComputerPlayer
 	public List<GameStateMinimax> newLayer = new ArrayList<GameStateMinimax>();
 	public List<GameStateMinimax> layer1 = new ArrayList<GameStateMinimax>();
 
-	private int breakLevel = 4;
+	private int breakLevel = 1;
 	
 	
-    public ComputerPlayerMinimax(int whichPlayer)
-    {
-        super(whichPlayer);
-        ;
-    }
-
-    /* 
-     * You will implement this function in homework
-     */
-    private void calculateStateHeuristicValue_1(GameStateMinimax state)
+    public ComputerPlayerAbuser(int whichPlayer)
     {
     	
-    	int winner = isGameFinished(state.stateArray);
-    	if (winner == state.minMaxPlayer) {
-    		state.score = 100;
-    	}else if(winner == 0) {
-		int score = 0;
-		int tempScore = 0;
-		int redCounter = 0; //00-01-02 // 10-11-12 // 20-21-22
-		int greenCounter = 0; //55-56-57//65-66-67//75-76-77
-		
-		 for (int row = 0; row < 8; ++row)
-	        {
-	            for (int col = 0; col < 8; ++col)
-	            {        	
-	            	switch (state.stateArray[row][col]) {
-	            	case 0:
-	            		break;
-	            	case PLAYER_RED:
-	            		tempScore =  manhattanDist(row,col,PLAYER_RED,redCounter); //ne kadar kücükse o kadar iyi red için. 1-5
-	            		if (state.minMaxPlayer == PLAYER_RED) {
-	            			score -= tempScore;
-	            		}else {
-	            			score += tempScore;
-	            		}
-	            		redCounter +=1;
-	            		break;
-	            	case PLAYER_GREEN:
-	            		tempScore =  manhattanDist(row,col,PLAYER_GREEN,greenCounter);
-	            		if (state.minMaxPlayer == PLAYER_RED) {
-	            			score += tempScore;
-	            		}else {
-	            			score -= tempScore;
-	            		}
-	            		greenCounter +=1;
-	            		break;
-	            	default:
-	            		System.out.println("StateId:" + state.stateId + " has unexpected piece");
-	            	}
-	            }
-	        }
-		
-		 state.score = score;}else {
-			 state.score = -100;
-		 }
+        super(whichPlayer);
+
+        GameStateMinimax.initializeDestinations();     // ---->  Added.
+        
     }
 
     /* 
      * You will implement this function in homework
      */
-    private void calculateStateHeuristicValue_2(GameStateMinimax state)
+    private void calculateStateHeuristicValue_1(GameStateMinimax state, int Nodesize)
     {
+    	System.out.println(Nodesize);
     	int winner = isGameFinished(state.stateArray);
     	if (winner == state.minMaxPlayer) {
     		state.score = 900;
@@ -114,7 +68,7 @@ class ComputerPlayerMinimax extends ComputerPlayer
 	            	case PLAYER_RED:
 	            		tempScore =  Math.abs(row-0)+Math.abs(col-0); //ne kadar kücükse o kadar iyi red için. 1-5
 	            		
-	            		if (row == 7 && col == 7 ) {tempScore +=1;}
+	            		if (row == 7 && col == 7 ) {tempScore -=1;}
 	            		
 	            		if(state.minMaxPlayer ==PLAYER_RED) {
 	            		switch (row) {
@@ -135,7 +89,16 @@ class ComputerPlayerMinimax extends ComputerPlayer
 	            		
 	            		}
 	            		penalty = 0;
-	            		if (row0 >3 || col0>3) {
+	            		
+	            		if (row0 == 3 || row1 == 3 || col0 == 3 || col1 == 3) {
+	            			penalty = row0 + row1 + col0 + col1 -3;
+	            		}
+	            		if (row0 == 2 || row1 == 2 || col0 == 2 || col1 == 2) {
+	            			penalty = row0 + row1 + col0 + col1 -2;
+	            		}
+	            	
+	            		
+	            		if (row0 >3 || col0>3 ) {
 	            			penalty = 100;
 	            		}
 	            		if (row1 >6 || col1>6) {
@@ -149,19 +112,25 @@ class ComputerPlayerMinimax extends ComputerPlayer
 	            		}
 	            		if ((row1 >3 && row0 > 2)|| (col1>3 && col0 > 2 )) {
 	            			penalty = 100;
-	            		}}
+	            		}
+	            		
+	            		if(row == 5 && col == 5 && Nodesize >3) {
+	            			penalty = -50;
+	            		}
+	            		
+	            		}
 	            			            		
 	            		if (state.minMaxPlayer == PLAYER_RED) {
-	            			score -= tempScore;
+	            			score += tempScore;
 	            			score -= penalty;
 	            		}else {
-	            			score += tempScore;
+	            			score -= tempScore;
 	            			//score += penalty;
 	            		}
 	            		break;
 	            	case PLAYER_GREEN:
 	            		tempScore =  Math.abs(row-7)+Math.abs(col-7);
-	            		if (row == 0 && col == 0 ) {tempScore +=1;}
+	            		if (row == 0 && col == 0 ) {tempScore -=1;}
 	            		if (state.minMaxPlayer == PLAYER_GREEN) {
 	            		switch (row) {
 	            		
@@ -182,9 +151,22 @@ class ComputerPlayerMinimax extends ComputerPlayer
 	            		}
 	            		
 	            		penalty = 0;
-	            		if (row7 >3 || col7>3) {
+	            		if (row7 >3 || col7>3 ) {
 	            			penalty = 100;
 	            		}
+	            		
+	            		if (row7 == 3 || col7 == 3 || row6 == 3 || col6 == 3) {
+	            			penalty = row7 + row6 + col7 + col6 -3;
+	            		}
+	            		
+	            		if (row7 == 2 || col7 == 2 || row6 == 2 || col6 == 2) {
+	            			penalty = row7 + row6 + col7 + col6 -2;
+	            		}
+	            		
+	            		if ((row7 == 3 && col7 == 3 && state.stateArray[7][7] != PLAYER_GREEN)) {
+	            			penalty = 100;
+	            		}
+	            		
 	            		if (row6 >6 || col6>6) {
 	            			penalty = 100;
 	            		}
@@ -196,13 +178,19 @@ class ComputerPlayerMinimax extends ComputerPlayer
 	            		}
 	            		if ((row6 >3 && row7 > 2)|| (col6>3 && col7 > 2 )) {
 	            			penalty = 100;
-	            		}}
+	            		}
+	            		
+	            		if(row == 2 && col == 2 && Nodesize >3) {
+	            			penalty = -50;
+	            		}
+	            		
+	            		}
 	            		
 	            		if (state.minMaxPlayer == PLAYER_RED) {
-	            			score += tempScore;
+	            			score -= tempScore;
 	            			//score += penalty;
 	            		}else {
-	            			score -= tempScore;
+	            			score += tempScore;
 	            			score -= penalty;
 	            		}
 	            		
@@ -217,7 +205,7 @@ class ComputerPlayerMinimax extends ComputerPlayer
 			 state.score = -900;
 		 }
     }
-
+    
     
 	private int manhattanDist(int row,int col, int player,int counter) {
 		
@@ -266,10 +254,14 @@ class ComputerPlayerMinimax extends ComputerPlayer
 public GameStateMinimax selectNode(GameStateMinimax gamestate, int givenScore) {
     	
     	List<GameStateMinimax> nodes = generateNextNodes(gamestate);
+    	
+    	if(this.whichPlayer == PLAYER_RED) {
+    	Collections.reverse(nodes);}
+    	
     	if(nodes.get(0).stateLayer == this.breakLevel) {
     		
     		for (GameStateMinimax node:nodes) {
-    			calculateStateHeuristicValue_2(node);
+    			calculateStateHeuristicValue_1(node,nodes.size());
     		}
 
     	}else {
@@ -289,7 +281,7 @@ public GameStateMinimax selectNode(GameStateMinimax gamestate, int givenScore) {
     			break;}
     		
     		if (isGameFinished(node.stateArray) != 0) {
-    			calculateStateHeuristicValue_2(node);
+    			calculateStateHeuristicValue_1(node,nodes.size());
     			continue;
     		}
     		
