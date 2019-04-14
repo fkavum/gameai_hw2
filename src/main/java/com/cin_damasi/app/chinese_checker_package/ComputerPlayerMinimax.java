@@ -13,17 +13,14 @@ class ComputerPlayerMinimax extends ComputerPlayer
 {
 	
 	public List<GameStateMinimax> gameStateTree = new ArrayList<GameStateMinimax>();
-	public List<GameStateMinimax> unCalculatedNodes = new ArrayList<GameStateMinimax>();
-	public List<GameStateMinimax> newLayer = new ArrayList<GameStateMinimax>();
-	public List<GameStateMinimax> layer1 = new ArrayList<GameStateMinimax>();
-
-	private int breakLevel = 4;
+	private int breakLevel = 5;
 	
 	
     public ComputerPlayerMinimax(int whichPlayer)
     {
         super(whichPlayer);
         ;
+        GameStateMinimax.initializeDestinations();
     }
 
     /* 
@@ -31,7 +28,7 @@ class ComputerPlayerMinimax extends ComputerPlayer
      */
     private void calculateStateHeuristicValue_1(GameStateMinimax state)
     {
-    	
+    	long time = System.currentTimeMillis();
     	int winner = isGameFinished(state.stateArray);
     	if (winner == state.minMaxPlayer) {
     		state.score = 100;
@@ -72,6 +69,7 @@ class ComputerPlayerMinimax extends ComputerPlayer
 	            }
 	        }
 		
+		 //System.out.println(System.currentTimeMillis()-time);
 		 state.score = score;}else {
 			 state.score = -100;
 		 }
@@ -81,7 +79,7 @@ class ComputerPlayerMinimax extends ComputerPlayer
      * You will implement this function in homework
      */
     private void calculateStateHeuristicValue_2(GameStateMinimax state)
-    {
+    {	long time = System.currentTimeMillis();
     	int winner = isGameFinished(state.stateArray);
     	if (winner == state.minMaxPlayer) {
     		state.score = 900;
@@ -212,7 +210,7 @@ class ComputerPlayerMinimax extends ComputerPlayer
 	            	}
 	            }
 	        }
-		
+		 //System.out.println(System.currentTimeMillis()-time);
 		 state.score = score;}else {
 			 state.score = -900;
 		 }
@@ -239,6 +237,7 @@ class ComputerPlayerMinimax extends ComputerPlayer
      */
     public Move getMove(GameState gameState)
     {  
+    	long time = System.currentTimeMillis();
         int [][] newStateArray = GameState.cloneGameState(gameState.getGameStateArray());
         GameStateMinimax originalState = new GameStateMinimax(newStateArray,null,null,null,this.whichPlayer);
         
@@ -257,7 +256,7 @@ class ComputerPlayerMinimax extends ComputerPlayer
         }
 
         Move move = new Move(selectedPiece, selectedPiece.getPosition(), selectedNode.movedPos);
-        System.out.println("MOVE YAPILDI");
+        System.out.println("MOVE YAPILDI. Dusunme Suresi:" + (System.currentTimeMillis()-time) + " ms");
         return move;   	
     }
     
@@ -267,32 +266,27 @@ public GameStateMinimax selectNode(GameStateMinimax gamestate, int givenScore) {
     	
     	List<GameStateMinimax> nodes = generateNextNodes(gamestate);
     	if(nodes.get(0).stateLayer == this.breakLevel) {
-    		
     		for (GameStateMinimax node:nodes) {
     			calculateStateHeuristicValue_2(node);
     		}
 
     	}else {
-    	
     		int tempBestScore = 999999;
     		boolean skip = false;
     		int deleteIndex = 0;
     		
     	for (GameStateMinimax node: nodes) {
     		if (skip) {
-    			
     			while (nodes.size() > deleteIndex +1 ) {
     				//System.out.println("Deleted at level:" + node.stateLayer);
     				nodes.remove(nodes.size() -1);
     			}
-    			
     			break;}
     		
     		if (isGameFinished(node.stateArray) != 0) {
     			calculateStateHeuristicValue_2(node);
     			continue;
     		}
-    		
     		
     		node.score = selectNode(node,tempBestScore).score;
     		
@@ -312,35 +306,21 @@ public GameStateMinimax selectNode(GameStateMinimax gamestate, int givenScore) {
     	
     	if (gamestate.stateOpponent == this.whichPlayer) {
     		int bestScore = -999999;
-    		
     		for (GameStateMinimax nextNode: nodes) {
-    			
     			if (nextNode.score > bestScore) {
     				bestScore = nextNode.score;
     				theBest = nextNode;
     			}
-    			
     		}
-    		
-    		
     	}else {
-    		
     		int bestScore = 999999;
-    		
     		for (GameStateMinimax nextNode: nodes) {
-    			
     			if (nextNode.score < bestScore) {
     				bestScore = nextNode.score;
     				theBest = nextNode;
-    			}
-    			
-    		}
-    		
-    		
-    		
-    	}
-    	
-    	
+    			}		
+    		}  		
+    	} 		
     	return theBest;
     }
     

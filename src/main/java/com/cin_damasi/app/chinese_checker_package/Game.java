@@ -50,8 +50,8 @@ public class Game implements PieceListener, SquareListener, Runnable
         
         //this.playerRed = new HumanPlayer(PLAYER_RED);
         //this.playerRed = new ComputerPlayerRandom(PLAYER_RED);
-        //this.playerRed = new ComputerPlayerMinimax(PLAYER_RED);
-        this.playerRed = new ComputerPlayerAbuser(PLAYER_RED);
+        this.playerRed = new ComputerPlayerMinimax(PLAYER_RED);
+        //this.playerRed = new ComputerPlayerAbuser(PLAYER_RED);
 
         //this.playerGreen = new HumanPlayer(PLAYER_GREEN);
         //this.playerGreen = new ComputerPlayerRandom(PLAYER_GREEN);
@@ -155,8 +155,7 @@ public class Game implements PieceListener, SquareListener, Runnable
             {
                 //  player made its move
                 //  BURDA HAMLE YAPILIYO
-                System.out.println("MOVE YAPILDI");
-                System.out.println(this.currentState.getGameStateArray()[4][5]);
+                //System.out.println("MOVE YAPILDI");
                 
                 Piece movedPiece = this.playedMove.getPiece();
                 System.out.println("Piece position before move:" + movedPiece.getPosition());
